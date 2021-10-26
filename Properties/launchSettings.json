@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WinKaf": {
+      "commandName": "Project",
+      "commandLineArgs": "/b=5"
+    }
+  }
+}
