@@ -104,7 +104,10 @@ namespace Caffiene
                     SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
                     recheckTime = DateTime.Now.AddSeconds(breakSeconds);
                 }
-                Thread.Sleep(loopCycle * 1000);
+                else
+                {
+                    Thread.Sleep(loopCycle * 1000);
+                }
             }
         }
 
