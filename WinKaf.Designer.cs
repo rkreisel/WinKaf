@@ -36,11 +36,12 @@ namespace Caffiene
             // lblCountdown
             // 
             this.lblCountdown.AutoSize = true;
-            this.lblCountdown.Location = new System.Drawing.Point(83, 102);
+            this.lblCountdown.Location = new System.Drawing.Point(88, 106);
             this.lblCountdown.Name = "lblCountdown";
             this.lblCountdown.Size = new System.Drawing.Size(38, 15);
             this.lblCountdown.TabIndex = 0;
             this.lblCountdown.Text = "label1";
+            this.lblCountdown.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // WinKaf
             // 
