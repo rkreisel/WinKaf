@@ -45,6 +45,7 @@ namespace Caffiene
         private int loopCycle = 1;
         private int breakSeconds = 300;
         private IDictionary<string, string> _argList;
+        private bool mouseMode = false;
 
         public WinKaf(string[] args)
         {
@@ -59,9 +60,13 @@ namespace Caffiene
                 {
                     AllocConsole();
                 }
+                if (_argList.ContainsKey("/m"))
+                {
+                    mouseMode = true;
+                }
                 if (_argList.ContainsKey("/h"))
                 {
-                    MessageBox.Show($"Help{Environment.NewLine}/b - seconds to wait before breaking the timer loop, default 300 (5 minutes){Environment.NewLine}/d - debug mode (opens command window with consoel output{Environment.NewLine}/h - This help screen", "WinKaf command line options", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"Help{Environment.NewLine}/b - seconds to wait before breaking the timer loop, default 300 (5 minutes){Environment.NewLine}/d - debug mode (opens command window with consoel output{Environment.NewLine}/m - Use 'Mouse move' to active instead of relying on the call to the internal 'stay awake' method{Environment.NewLine}/h - This help screen", "WinKaf command line options", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             InitializeComponent();
@@ -113,10 +118,12 @@ namespace Caffiene
                     Console.WriteLine($"Timer hit: {recheckTime.ToString()}");
                     UpdateText(breakSeconds.ToString(), lblCountdown);
                     Thread.Sleep(loopCycle * 1000);
-                    //SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
-                    //SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
-
-                    MoveMouse();
+                    
+                    if (mouseMode)
+                        MoveMouse();
+                    else
+                        SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+                    
                     recheckTime = DateTime.Now.AddSeconds(breakSeconds);
                 }
                 else
