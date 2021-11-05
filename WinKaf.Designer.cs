@@ -49,7 +49,7 @@ namespace WinKaf
             // chkUseMouseMode
             // 
             this.chkUseMouseMode.AutoSize = true;
-            this.chkUseMouseMode.Location = new System.Drawing.Point(13, 13);
+            this.chkUseMouseMode.Location = new System.Drawing.Point(6, 5);
             this.chkUseMouseMode.Name = "chkUseMouseMode";
             this.chkUseMouseMode.Size = new System.Drawing.Size(118, 19);
             this.chkUseMouseMode.TabIndex = 1;

@@ -48,23 +48,34 @@ namespace WinKaf
         private int breakSeconds = 300;
         private IDictionary<string, string> _argList;
         private bool mouseMode = false;
+        private bool quietMode = false;
 
         public WinKaf(string[] args)
         {
+            var startupMessages = new List<string>();
+
             _argList = ParseArgs(args);
             if (_argList.Count > 0)
             {
                 if (_argList.ContainsKey("/b"))
                 {
                     int.TryParse(_argList["/b"], out breakSeconds);
+                    startupMessages.Add($"Default timeout (300 seconds) overridden to {breakSeconds}");
                 }
                 if (_argList.ContainsKey("/d"))
                 {
                     AllocConsole();
+                    startupMessages.Add("Debug mode enabled. See console for messages.");
                 }
                 if (_argList.ContainsKey("/m"))
                 {
                     mouseMode = true;
+                    startupMessages.Add("Mouse mode enabled");
+                }
+                if (_argList.ContainsKey("/q"))
+                {
+                    quietMode = true;
+                    startupMessages.Add("Quiet mode enabled. (no message box messages)");
                 }
                 if (_argList.ContainsKey("/h"))
                 {
@@ -73,6 +84,13 @@ namespace WinKaf
             }
             InitializeComponent();
             UpdateText(breakSeconds.ToString(), lblCountdown);
+            var msg = string.Join($"{Environment.NewLine}", startupMessages.ToArray());
+            Console.WriteLine(msg);
+            if (startupMessages.Any() && !quietMode)
+            {
+                MessageBox.Show(msg, "WinKaf Startup Overrides", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            chkUseMouseMode.Checked = mouseMode;
             BackgroundLoopManager(loopCycle);
         }
 
