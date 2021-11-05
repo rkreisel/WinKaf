@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -74,10 +76,10 @@ namespace Caffiene
             BackgroundLoopManager(loopCycle);
         }
 
-        private IDictionary<string,string> ParseArgs(string[] args)
+        private IDictionary<string, string> ParseArgs(string[] args)
         {
             var argList = new Dictionary<string, string>();
-            foreach(var arg in args)
+            foreach (var arg in args)
             {
                 var parts = arg.Split('=', StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length == 1)
@@ -118,12 +120,12 @@ namespace Caffiene
                     Console.WriteLine($"Timer hit: {recheckTime.ToString()}");
                     UpdateText(breakSeconds.ToString(), lblCountdown);
                     Thread.Sleep(loopCycle * 1000);
-                    
+
                     if (mouseMode)
                         MoveMouse();
                     else
                         SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
-                    
+
                     recheckTime = DateTime.Now.AddSeconds(breakSeconds);
                 }
                 else
@@ -172,6 +174,11 @@ namespace Caffiene
             pt.x--;
             ClientToScreen(this.Handle, ref pt);
         }
-        #endregion        
+        #endregion
+
+        private void chkUseMouseMode_Click(object sender, EventArgs e)
+        {
+            mouseMode = ((CheckBox)sender).Checked;
+        }
     }
 }
