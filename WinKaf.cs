@@ -10,6 +10,19 @@ namespace Caffiene
     public partial class WinKaf : Form
     {
         #region Externals
+        [DllImport("User32.Dll")]
+        public static extern long SetCursorPos(int x, int y);
+
+        [DllImport("User32.Dll")]
+        public static extern bool ClientToScreen(IntPtr hWnd, ref POINT point);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int x;
+            public int y;
+        }
+
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
 
@@ -26,7 +39,6 @@ namespace Caffiene
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-
         #endregion
 
         static extern bool AllocConsole();
@@ -102,7 +114,9 @@ namespace Caffiene
                     UpdateText(breakSeconds.ToString(), lblCountdown);
                     Thread.Sleep(loopCycle * 1000);
                     //SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
-                    SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+                    //SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+
+                    MoveMouse();
                     recheckTime = DateTime.Now.AddSeconds(breakSeconds);
                 }
                 else
@@ -131,6 +145,25 @@ namespace Caffiene
             {
                 Console.WriteLine($"UpdateText failed because it could not find a Text property in the object passed to it. {txtObj}");
             }
+        }
+
+        private void MoveMouse()
+        {
+            if (InvokeRequired)
+            {
+                try
+                {
+                    this.Invoke(new Action(MoveMouse));
+                    return;
+                }
+                catch { } // don't do anything, because this only fails during shutdown anyway
+            }
+            //move the mouse 1 pixel then back
+            var pt = new POINT();
+            pt.x++;
+            ClientToScreen(this.Handle, ref pt);
+            pt.x--;
+            ClientToScreen(this.Handle, ref pt);
         }
         #endregion        
     }
