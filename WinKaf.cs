@@ -7,7 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using WinKaf;
 
-namespace Caffiene
+namespace WinKaf
 {
     public partial class WinKaf : Form
     {

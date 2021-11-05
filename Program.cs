@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Caffiene
+namespace WinKaf
 {
     static class Program
     {
