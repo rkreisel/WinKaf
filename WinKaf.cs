@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinKaf;
 
@@ -49,6 +51,10 @@ namespace WinKaf
         private IDictionary<string, string> _argList;
         private bool mouseMode = false;
         private bool quietMode = false;
+        private bool loggingEnabled = false;
+        private string logFileName = string.Empty;
+        private const string dateFormat = "yyyyMMddHHmmss";
+        private bool debugEnabled = false;
 
         public WinKaf(string[] args)
         {
@@ -64,6 +70,7 @@ namespace WinKaf
                 }
                 if (_argList.ContainsKey("/d"))
                 {
+                    debugEnabled = true;
                     AllocConsole();
                     startupMessages.Add("Debug mode enabled. See console for messages.");
                 }
@@ -77,15 +84,24 @@ namespace WinKaf
                     quietMode = true;
                     startupMessages.Add("Quiet mode enabled. (no message box messages)");
                 }
+                if (_argList.ContainsKey("/l"))
+                {
+                    logFileName = $"{_argList["/l"]}";
+                    if (string.IsNullOrWhiteSpace(logFileName))
+                        logFileName = $"WinKafLog-{DateTime.Now.ToString(dateFormat)}.txt";
+
+                    loggingEnabled = true;
+                    startupMessages.Add($"Logging enabled. Logging to {logFileName}.");
+                }
                 if (_argList.ContainsKey("/h"))
                 {
-                    MessageBox.Show($"Help{Environment.NewLine}/b - seconds to wait before breaking the timer loop, default 300 (5 minutes){Environment.NewLine}/d - debug mode (opens command window with consoel output{Environment.NewLine}/m - Use 'Mouse move' to active instead of relying on the call to the internal 'stay awake' method{Environment.NewLine}/h - This help screen", "WinKaf command line options", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"Help{Environment.NewLine}/b - seconds to wait before breaking the timer loop, default 300 (5 minutes){Environment.NewLine}/d - debug mode (opens command window with consoel output{Environment.NewLine}/m - Use 'Mouse move' to active instead of relying on the call to the internal 'stay awake' method{Environment.NewLine}/l - enable logging{Environment.NewLine}/q - quiet mode, no messages/h - This help screen", "WinKaf command line options", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             InitializeComponent();
             UpdateText(breakSeconds.ToString(), lblCountdown);
             var msg = string.Join($"{Environment.NewLine}", startupMessages.ToArray());
-            Console.WriteLine(msg);
+            LogIt(msg);
             if (startupMessages.Any() && !quietMode)
             {
                 MessageBox.Show(msg, "WinKaf Startup Overrides", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -94,6 +110,16 @@ namespace WinKaf
             BackgroundLoopManager(loopCycle);
         }
 
+        private void LogIt(string message)
+        {
+            if (debugEnabled)
+                Console.WriteLine(message);
+            if (loggingEnabled)
+            {
+                using StreamWriter file = new(logFileName, append: true);
+                file.WriteLine($"{DateTime.Now.ToString(dateFormat)} - {message}");
+            }
+        }
         private IDictionary<string, string> ParseArgs(string[] args)
         {
             var argList = new Dictionary<string, string>();
@@ -135,7 +161,7 @@ namespace WinKaf
 
                 if (DateTime.Now >= recheckTime)
                 {
-                    Console.WriteLine($"Timer hit: {recheckTime.ToString()}");
+                    LogIt($"Timer hit: {recheckTime.ToString()}");
                     UpdateText(breakSeconds.ToString(), lblCountdown);
                     Thread.Sleep(loopCycle * 1000);
 
@@ -170,7 +196,7 @@ namespace WinKaf
             }
             else
             {
-                Console.WriteLine($"UpdateText failed because it could not find a Text property in the object passed to it. {txtObj}");
+                LogIt($"UpdateText failed because it could not find a Text property in the object passed to it. {txtObj}");
             }
         }
 

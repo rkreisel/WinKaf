@@ -2,7 +2,7 @@
   "profiles": {
     "WinKaf": {
       "commandName": "Project",
-      "commandLineArgs": "/b=5 /d /m"
+      "commandLineArgs": "/b=5 /d /m /l=wkLog.txt"
     }
   }
 }
