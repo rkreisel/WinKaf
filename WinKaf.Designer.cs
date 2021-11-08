@@ -34,6 +34,7 @@ namespace WinKaf
             this.lblCountdown = new System.Windows.Forms.Label();
             this.chkUseMouseMode = new System.Windows.Forms.CheckBox();
             this.tt = new System.Windows.Forms.ToolTip(this.components);
+            this.btnViewLog = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblCountdown
@@ -60,6 +61,17 @@ namespace WinKaf
             this.chkUseMouseMode.UseVisualStyleBackColor = true;
             this.chkUseMouseMode.Click += new System.EventHandler(this.chkUseMouseMode_Click);
             // 
+            // btnViewLog
+            // 
+            this.btnViewLog.Location = new System.Drawing.Point(6, 21);
+            this.btnViewLog.Name = "btnViewLog";
+            this.btnViewLog.Size = new System.Drawing.Size(75, 23);
+            this.btnViewLog.TabIndex = 2;
+            this.btnViewLog.Text = "View Log";
+            this.btnViewLog.UseVisualStyleBackColor = true;
+            this.btnViewLog.Visible = false;
+            this.btnViewLog.Click += new System.EventHandler(this.btnViewLog_Click);
+            // 
             // WinKaf
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -67,6 +79,7 @@ namespace WinKaf
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(210, 177);
+            this.Controls.Add(this.btnViewLog);
             this.Controls.Add(this.chkUseMouseMode);
             this.Controls.Add(this.lblCountdown);
             this.DoubleBuffered = true;
@@ -85,6 +98,7 @@ namespace WinKaf
         private System.Windows.Forms.Label lblCountdown;
         private System.Windows.Forms.CheckBox chkUseMouseMode;
         private System.Windows.Forms.ToolTip tt;
+        private System.Windows.Forms.Button btnViewLog;
     }
 }
 

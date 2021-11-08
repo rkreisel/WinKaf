@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management;
@@ -95,10 +96,12 @@ namespace WinKaf
                 }
                 if (_argList.ContainsKey("/h"))
                 {
-                    MessageBox.Show($"Help{Environment.NewLine}/b - seconds to wait before breaking the timer loop, default 300 (5 minutes){Environment.NewLine}/d - debug mode (opens command window with consoel output{Environment.NewLine}/m - Use 'Mouse move' to active instead of relying on the call to the internal 'stay awake' method{Environment.NewLine}/l - enable logging{Environment.NewLine}/q - quiet mode, no messages/h - This help screen", "WinKaf command line options", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"Help{Environment.NewLine}/b - seconds to wait before breaking the timer loop, default 300 (5 minutes){Environment.NewLine}/d - debug mode (opens command window with consoel output{Environment.NewLine}/m - Use 'Mouse move' to active instead of relying on the call to the internal 'stay awake' method{Environment.NewLine}/l[=filename] - enable logging{Environment.NewLine}/q - quiet mode, no messages/h - This help screen", "WinKaf command line options", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             InitializeComponent();
+            if (loggingEnabled)
+                btnViewLog.Visible = true;
             UpdateText(breakSeconds.ToString(), lblCountdown);
             var msg = string.Join($"{Environment.NewLine}", startupMessages.ToArray());
             LogIt(msg);
@@ -113,7 +116,7 @@ namespace WinKaf
         private void LogIt(string message)
         {
             if (debugEnabled)
-                Console.WriteLine(message);
+                Console.WriteLine($"{DateTime.Now.ToString(dateFormat)} - {message}");
             if (loggingEnabled)
             {
                 using StreamWriter file = new(logFileName, append: true);
@@ -223,6 +226,14 @@ namespace WinKaf
         private void chkUseMouseMode_Click(object sender, EventArgs e)
         {
             mouseMode = ((CheckBox)sender).Checked;
+        }
+
+        private void btnViewLog_Click(object sender, EventArgs e)
+        {
+            //System.Diagnostics.Process.Start(logFileName);
+            var info = new ProcessStartInfo("explorer.exe");
+            info.Arguments = $"\"{logFileName}\"";
+            Process.Start(info);
         }
     }
 }
