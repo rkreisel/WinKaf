@@ -35,6 +35,7 @@ namespace WinKaf
             this.chkUseMouseMode = new System.Windows.Forms.CheckBox();
             this.tt = new System.Windows.Forms.ToolTip(this.components);
             this.btnViewLog = new System.Windows.Forms.Button();
+            this.bw = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // lblCountdown
@@ -72,6 +73,12 @@ namespace WinKaf
             this.btnViewLog.Visible = false;
             this.btnViewLog.Click += new System.EventHandler(this.btnViewLog_Click);
             // 
+            // bw
+            // 
+            this.bw.WorkerReportsProgress = true;
+            this.bw.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bw_DoWork);
+            this.bw.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bw_ProgressChanged);
+            // 
             // WinKaf
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -99,6 +106,7 @@ namespace WinKaf
         private System.Windows.Forms.CheckBox chkUseMouseMode;
         private System.Windows.Forms.ToolTip tt;
         private System.Windows.Forms.Button btnViewLog;
+        private System.ComponentModel.BackgroundWorker bw;
     }
 }
 

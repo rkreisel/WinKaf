@@ -102,7 +102,8 @@ namespace WinKaf
             InitializeComponent();
             if (loggingEnabled)
                 btnViewLog.Visible = true;
-            UpdateText(breakSeconds.ToString(), lblCountdown);
+            //UpdateText(breakSeconds.ToString(), lblCountdown);
+            lblCountdown.Text = breakSeconds.ToString();
             var msg = string.Join($"{Environment.NewLine}", startupMessages.ToArray());
             LogIt(msg);
             if (startupMessages.Any() && !quietMode)
@@ -110,7 +111,7 @@ namespace WinKaf
                 MessageBox.Show(msg, "WinKaf Startup Overrides", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             chkUseMouseMode.Checked = mouseMode;
-            BackgroundLoopManager(loopCycle);
+            bw.RunWorkerAsync();
         }
 
         private void LogIt(string message)
@@ -141,79 +142,8 @@ namespace WinKaf
             return argList;
         }
 
-        #region Looping code
-        private void BackgroundLoopManager(int seconds)
-        {
-            Thread looper = new Thread(new ThreadStart(BackgroundLoop))
-            {
-                IsBackground = true,
-                Name = "TimerThread"
-            };
-            loopCycle = seconds;
-            looper.Start();
-        }
-
-        private void BackgroundLoop()
-        {
-            var recheckTime = DateTime.Now.AddSeconds(breakSeconds);
-            while (true)
-            {
-
-                var waittime = recheckTime - DateTime.Now;
-                UpdateText(((int)waittime.TotalSeconds).ToString(), lblCountdown);
-
-                if (DateTime.Now >= recheckTime)
-                {
-                    LogIt($"Timer hit: {recheckTime.ToString()}");
-                    UpdateText(breakSeconds.ToString(), lblCountdown);
-                    Thread.Sleep(loopCycle * 1000);
-
-                    if (mouseMode)
-                        MoveMouse();
-                    else
-                        SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
-
-                    recheckTime = DateTime.Now.AddSeconds(breakSeconds);
-                }
-                else
-                {
-                    Thread.Sleep(loopCycle * 1000);
-                }
-            }
-        }
-
-        private void UpdateText<T>(string newText, T txtObj)
-        {
-            if (InvokeRequired)
-            {
-                try
-                {
-                    this.Invoke(new Action<string, T>(UpdateText), new object[] { newText, txtObj });
-                    return;
-                }
-                catch { } // don't do anything, because this only fails during shutdown anyway
-            }
-            if (txtObj.HasProperty("Text"))
-            {
-                (txtObj as dynamic).Text = newText;
-            }
-            else
-            {
-                LogIt($"UpdateText failed because it could not find a Text property in the object passed to it. {txtObj}");
-            }
-        }
-
         private void MoveMouse()
         {
-            if (InvokeRequired)
-            {
-                try
-                {
-                    this.Invoke(new Action(MoveMouse));
-                    return;
-                }
-                catch { } // don't do anything, because this only fails during shutdown anyway
-            }
             //move the mouse 1 pixel then back
             var pt = new POINT();
             pt.x++;
@@ -221,7 +151,6 @@ namespace WinKaf
             pt.x--;
             ClientToScreen(this.Handle, ref pt);
         }
-        #endregion
 
         private void chkUseMouseMode_Click(object sender, EventArgs e)
         {
@@ -230,10 +159,48 @@ namespace WinKaf
 
         private void btnViewLog_Click(object sender, EventArgs e)
         {
-            //System.Diagnostics.Process.Start(logFileName);
             var info = new ProcessStartInfo("explorer.exe");
             info.Arguments = $"\"{logFileName}\"";
             Process.Start(info);
+        }
+
+        private void bw_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            if (e.ProgressPercentage < 0)
+            {
+                if (mouseMode)
+                {
+                    MoveMouse();
+                }
+                else
+                    SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+            }
+            else
+                lblCountdown.Text = e.ProgressPercentage.ToString();
+        }
+
+        private void bw_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            var recheckTime = DateTime.Now.AddSeconds(breakSeconds);
+            while (true)
+            {
+
+                var waittime = recheckTime - DateTime.Now;
+                bw.ReportProgress((int)waittime.TotalSeconds);
+
+                if (DateTime.Now >= recheckTime)
+                {
+                    LogIt($"Timer hit: {recheckTime.ToString()}");
+                    bw.ReportProgress(breakSeconds);
+                    Thread.Sleep(loopCycle * 1000);
+                    bw.ReportProgress(-1);
+                    recheckTime = DateTime.Now.AddSeconds(breakSeconds);
+                }
+                else
+                {
+                    Thread.Sleep(loopCycle * 1000);
+                }
+            }
         }
     }
 }
