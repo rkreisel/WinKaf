@@ -56,6 +56,7 @@ namespace WinKaf
         private string logFileName = string.Empty;
         private const string dateFormat = "yyyyMMddHHmmss";
         private bool debugEnabled = false;
+        private int _maxLogFiles = 30;
 
         public WinKaf(string[] args)
         {
@@ -87,16 +88,14 @@ namespace WinKaf
                 }
                 if (_argList.ContainsKey("/l"))
                 {
-                    logFileName = $"{_argList["/l"]}";
-                    if (string.IsNullOrWhiteSpace(logFileName))
-                        logFileName = $"WinKafLog-{DateTime.Now.ToString(dateFormat)}.txt";
-
+                    logFileName = $"WinKafLog-{DateTime.Now.ToString(dateFormat)}.txt";
                     loggingEnabled = true;
                     startupMessages.Add($"Logging enabled. Logging to {logFileName}.");
+                    startupMessages.AddRange(CleanupLogs());
                 }
                 if (_argList.ContainsKey("/h"))
                 {
-                    MessageBox.Show($"Help{Environment.NewLine}/b - seconds to wait before breaking the timer loop, default 300 (5 minutes){Environment.NewLine}/d - debug mode (opens command window with consoel output{Environment.NewLine}/m - Use 'Mouse move' to active instead of relying on the call to the internal 'stay awake' method{Environment.NewLine}/l[=filename] - enable logging{Environment.NewLine}/q - quiet mode, no messages/h - This help screen", "WinKaf command line options", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"/b - seconds to wait before breaking the timer loop, default 300 (5 minutes){Environment.NewLine}{Environment.NewLine}/d - debug mode (opens command window with console output{Environment.NewLine}{Environment.NewLine}/m - Use 'Mouse move' to active instead of relying on the call to the internal 'stay awake' method{Environment.NewLine}{Environment.NewLine}/l [# of days of log files to keep  (default = 30)] - enable logging{Environment.NewLine}{Environment.NewLine}/q - quiet mode, no messages{Environment.NewLine}{Environment.NewLine}/h - This help screen{Environment.NewLine}{Environment.NewLine}Example:{Environment.NewLine}{Environment.NewLine}WinKaf /b=5 /d /l=5 /q{Environment.NewLine}    break (check) every 5 seconds{Environment.NewLine}    show debug window{Environment.NewLine}    enable logging and keep a max of 5 files{Environment.NewLine}    quiet mode", "WinKaf command line options", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             InitializeComponent();
@@ -124,6 +123,31 @@ namespace WinKaf
                 file.WriteLine($"{DateTime.Now.ToString(dateFormat)} - {message}");
             }
         }
+
+        private List<string> CleanupLogs()
+        {
+            var srch = $"WinKafLog-*.txt";
+            var result = new List<string>();
+
+            if (_argList.ContainsKey("/l"))
+            {
+                if (int.TryParse(_argList["/l"], out int nbrOfLogFiles))
+                {
+                    _maxLogFiles = nbrOfLogFiles;
+                }
+            }
+            var logFileList = Directory.GetFiles(Directory.GetCurrentDirectory(), srch).ToList().OrderByDescending(fn => fn);
+            if (logFileList.Count() > _maxLogFiles)
+            {
+                foreach (var fn in logFileList.Skip(_maxLogFiles))
+                {
+                    File.Delete(fn);
+                    result.Add($"Deleted {fn}");
+                }
+            }
+            return result;
+        }
+
         private IDictionary<string, string> ParseArgs(string[] args)
         {
             var argList = new Dictionary<string, string>();
