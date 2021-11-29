@@ -2,7 +2,7 @@
   "profiles": {
     "WinKaf": {
       "commandName": "Project",
-      "commandLineArgs": "/b=5 /d /l /q"
+      "commandLineArgs": "/b=5 /d /l /q /h"
     }
   }
 }
