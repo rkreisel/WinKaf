@@ -54,9 +54,10 @@ namespace WinKaf
         private bool quietMode = false;
         private bool loggingEnabled = false;
         private string logFileName = string.Empty;
-        private const string dateFormat = "yyyyMMddHHmmss";
+        private const string dateFormat = "yyyyMMdd";
         private bool debugEnabled = false;
         private int _maxLogFiles = 30;
+        private Viewer? viewer;
 
         public WinKaf(string[] args)
         {
@@ -101,10 +102,9 @@ namespace WinKaf
             InitializeComponent();
             if (loggingEnabled)
                 btnViewLog.Visible = true;
-            //UpdateText(breakSeconds.ToString(), lblCountdown);
             lblCountdown.Text = breakSeconds.ToString();
             var msg = string.Join($"{Environment.NewLine}", startupMessages.ToArray());
-            LogIt(msg);
+            ReportIt(msg);
             if (startupMessages.Any() && !quietMode)
             {
                 MessageBox.Show(msg, "WinKaf Startup Overrides", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -113,14 +113,16 @@ namespace WinKaf
             bw.RunWorkerAsync();
         }
 
-        private void LogIt(string message)
+        private void ReportIt(string message)
         {
+            var pointInTime = DateTime.Now;
+            var timestamp = $"{pointInTime.ToString(dateFormat)}-{pointInTime.ToString("HHmmss.fff")}";
             if (debugEnabled)
-                Console.WriteLine($"{DateTime.Now.ToString(dateFormat)} - {message}");
+                Console.WriteLine($"{timestamp} - {message}");
             if (loggingEnabled)
             {
                 using StreamWriter file = new(logFileName, append: true);
-                file.WriteLine($"{DateTime.Now.ToString(dateFormat)} - {message}");
+                file.WriteLine($"{timestamp} - {message}");
             }
         }
 
@@ -179,13 +181,27 @@ namespace WinKaf
         private void chkUseMouseMode_Click(object sender, EventArgs e)
         {
             mouseMode = ((CheckBox)sender).Checked;
+            ReportIt($"Switching mouse mode: {mouseMode}");
         }
 
         private void btnViewLog_Click(object sender, EventArgs e)
         {
-            var info = new ProcessStartInfo("explorer.exe");
-            info.Arguments = $"\"{logFileName}\"";
-            Process.Start(info);
+            if (loggingEnabled)
+            {
+                ReportIt("Displaying log file contents.");
+                if (this.viewer == null || this.viewer.IsDisposed)
+                {
+                    this.viewer = new Viewer();
+                    viewer.Text = $"Ipsum Log Viewer - {logFileName}";
+                }
+                viewer.LoadText(File.ReadAllText(logFileName));
+                viewer.Show();
+            }
+            else
+            {
+                ReportIt("Cannot show log file. Logging is not enabled.");
+                MessageBox.Show("Logging not enabled. You can enable it with the '/l' command line argument.", "WinKaf - Argument Missing", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void bw_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -214,7 +230,7 @@ namespace WinKaf
 
                 if (DateTime.Now >= recheckTime)
                 {
-                    LogIt($"Timer hit: {recheckTime.ToString()}");
+                    ReportIt($"Timer hit: {recheckTime.ToString()}");
                     bw.ReportProgress(breakSeconds);
                     Thread.Sleep(loopCycle * 1000);
                     bw.ReportProgress(-1);
@@ -225,6 +241,30 @@ namespace WinKaf
                     Thread.Sleep(loopCycle * 1000);
                 }
             }
+        }
+
+        private void trayIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+        }
+
+        private void WinKaf_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+                this.Hide();
+        }
+
+        private void showToolStripMenuItem_Click(object sender, EventArgs e) =>        
+            trayIcon_MouseDoubleClick(sender, null);
+
+        private void exitWinKafToolStripMenuItem_Click(object sender, EventArgs e) =>
+            Application.ExitThread();
+
+        private void cmTrayIcon_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!loggingEnabled)
+                viewLogToolStripMenuItem.Visible = false;
         }
     }
 }
