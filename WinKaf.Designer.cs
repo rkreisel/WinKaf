@@ -36,6 +36,12 @@ namespace WinKaf
             this.tt = new System.Windows.Forms.ToolTip(this.components);
             this.btnViewLog = new System.Windows.Forms.Button();
             this.bw = new System.ComponentModel.BackgroundWorker();
+            this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.cmTrayIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitWinKafToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmTrayIcon.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblCountdown
@@ -79,6 +85,48 @@ namespace WinKaf
             this.bw.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bw_DoWork);
             this.bw.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bw_ProgressChanged);
             // 
+            // trayIcon
+            // 
+            this.trayIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.trayIcon.BalloonTipText = "Manage WinKaf";
+            this.trayIcon.BalloonTipTitle = "WinKaf";
+            this.trayIcon.ContextMenuStrip = this.cmTrayIcon;
+            this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
+            this.trayIcon.Text = "WinKaf";
+            this.trayIcon.Visible = true;
+            this.trayIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.trayIcon_MouseDoubleClick);
+            // 
+            // cmTrayIcon
+            // 
+            this.cmTrayIcon.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showToolStripMenuItem,
+            this.viewLogToolStripMenuItem,
+            this.exitWinKafToolStripMenuItem});
+            this.cmTrayIcon.Name = "cmTrayIcon";
+            this.cmTrayIcon.Size = new System.Drawing.Size(181, 92);
+            this.cmTrayIcon.Opening += new System.ComponentModel.CancelEventHandler(this.cmTrayIcon_Opening);
+            // 
+            // showToolStripMenuItem
+            // 
+            this.showToolStripMenuItem.Name = "showToolStripMenuItem";
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showToolStripMenuItem.Text = "Show WinKaf";
+            this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
+            // 
+            // viewLogToolStripMenuItem
+            // 
+            this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
+            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.viewLogToolStripMenuItem.Text = "View Log";
+            this.viewLogToolStripMenuItem.Click += new System.EventHandler(this.btnViewLog_Click);
+            // 
+            // exitWinKafToolStripMenuItem
+            // 
+            this.exitWinKafToolStripMenuItem.Name = "exitWinKafToolStripMenuItem";
+            this.exitWinKafToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitWinKafToolStripMenuItem.Text = "Exit WinKaf";
+            this.exitWinKafToolStripMenuItem.Click += new System.EventHandler(this.exitWinKafToolStripMenuItem_Click);
+            // 
             // WinKaf
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -95,6 +143,8 @@ namespace WinKaf
             this.MaximizeBox = false;
             this.Name = "WinKaf";
             this.Text = "WK";
+            this.Resize += new System.EventHandler(this.WinKaf_Resize);
+            this.cmTrayIcon.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -107,6 +157,11 @@ namespace WinKaf
         private System.Windows.Forms.ToolTip tt;
         private System.Windows.Forms.Button btnViewLog;
         private System.ComponentModel.BackgroundWorker bw;
+        private System.Windows.Forms.NotifyIcon trayIcon;
+        private System.Windows.Forms.ContextMenuStrip cmTrayIcon;
+        private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitWinKafToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
     }
 }
 
