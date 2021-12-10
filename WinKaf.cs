@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using WinKaf;
 
 namespace WinKaf
 {
@@ -16,10 +12,10 @@ namespace WinKaf
     {
         #region Externals
         [DllImport("User32.Dll")]
-        public static extern long SetCursorPos(int x, int y);
+        private static extern long SetCursorPos(int x, int y);
 
         [DllImport("User32.Dll")]
-        public static extern bool ClientToScreen(IntPtr hWnd, ref POINT point);
+        private static extern bool ClientToScreen(IntPtr hWnd, ref POINT point);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
@@ -47,17 +43,19 @@ namespace WinKaf
         #endregion
 
         static extern bool AllocConsole();
-        private int loopCycle = 1;
-        private int breakSeconds = 300;
-        private IDictionary<string, string> _argList;
+        private readonly int loopCycle = 1;
+        private readonly int breakSeconds = 300;
+        private readonly IDictionary<string, string> _argList;
         private bool mouseMode = false;
-        private bool quietMode = false;
-        private bool loggingEnabled = false;
-        private string logFileName = string.Empty;
+        private readonly bool quietMode = false;
+        private readonly bool loggingEnabled = false;
+        private readonly string logFileName = string.Empty;
         private const string dateFormat = "yyyyMMdd";
-        private bool debugEnabled = false;
+        private readonly bool debugEnabled = false;
         private int _maxLogFiles = 30;
+        #nullable enable
         private Viewer? viewer;
+        #nullable disable
 
         public WinKaf(string[] args)
         {
@@ -68,7 +66,7 @@ namespace WinKaf
             {
                 if (_argList.ContainsKey("/b"))
                 {
-                    int.TryParse(_argList["/b"], out breakSeconds);
+_ =                    int.TryParse(_argList["/b"], out breakSeconds);
                     startupMessages.Add($"Default timeout (300 seconds) overridden to {breakSeconds}");
                 }
                 if (_argList.ContainsKey("/d"))
@@ -116,7 +114,7 @@ namespace WinKaf
         private void ReportIt(string message)
         {
             var pointInTime = DateTime.Now;
-            var timestamp = $"{pointInTime.ToString(dateFormat)}-{pointInTime.ToString("HHmmss.fff")}";
+            var timestamp = $"{pointInTime.ToString(dateFormat)}-{pointInTime:HHmmss.fff}";
             if (debugEnabled)
                 Console.WriteLine($"{timestamp} - {message}");
             if (loggingEnabled)
@@ -150,7 +148,7 @@ namespace WinKaf
             return result;
         }
 
-        private IDictionary<string, string> ParseArgs(string[] args)
+        private static IDictionary<string, string> ParseArgs(string[] args)
         {
             var argList = new Dictionary<string, string>();
             foreach (var arg in args)
@@ -230,7 +228,7 @@ namespace WinKaf
 
                 if (DateTime.Now >= recheckTime)
                 {
-                    ReportIt($"Timer hit: {recheckTime.ToString()}");
+                    ReportIt($"Timer hit: {recheckTime}");
                     bw.ReportProgress(breakSeconds);
                     Thread.Sleep(loopCycle * 1000);
                     bw.ReportProgress(-1);
@@ -255,7 +253,7 @@ namespace WinKaf
                 this.Hide();
         }
 
-        private void showToolStripMenuItem_Click(object sender, EventArgs e) =>        
+        private void showToolStripMenuItem_Click(object sender, EventArgs e) =>
             trayIcon_MouseDoubleClick(sender, null);
 
         private void exitWinKafToolStripMenuItem_Click(object sender, EventArgs e) =>
