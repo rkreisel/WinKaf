@@ -2,33 +2,31 @@ using System;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace WinKaf
+namespace WinKaf;
+
+static class Program
 {
-    static class Program
+
+    /// <summary>
+    ///  The main entry point for the application.
+    /// </summary>
+    [STAThread]
+    static void Main(string[] args)
     {
-        private static Mutex mutex = null;
+        const string appName = "WinKaf";
 
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main(string[] args)
+        _ = new Mutex(true, appName, out bool createdNew);
+
+        if (!createdNew)
         {
-            const string appName = "WinKaf";
-            bool createdNew;
-
-            mutex = new Mutex(true, appName, out createdNew);
-
-            if (!createdNew)
-            {
-                //app is already running! Exiting the application  
-                return;
-            }
-
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new WinKaf(args));
+            //app is already running! Exiting the application  
+            return;
         }
+
+        Application.SetHighDpiMode(HighDpiMode.SystemAware);
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+        Application.Run(new WinKaf(args));
     }
 }
+
