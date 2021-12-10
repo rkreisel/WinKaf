@@ -190,7 +190,7 @@ _ =                    int.TryParse(_argList["/b"], out breakSeconds);
                 if (this.viewer == null || this.viewer.IsDisposed)
                 {
                     this.viewer = new Viewer();
-                    viewer.Text = $"Ipsum Log Viewer - {logFileName}";
+                    viewer.Text = $"{this.Name} Log Viewer - {logFileName}";
                 }
                 viewer.LoadText(File.ReadAllText(logFileName));
                 viewer.Show();
