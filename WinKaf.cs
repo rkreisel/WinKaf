@@ -100,13 +100,16 @@ _ =                    int.TryParse(_argList["/b"], out breakSeconds);
             }
             InitializeComponent();
             if (loggingEnabled)
+            {
                 btnViewLog.Visible = true;
+                viewLogToolStripMenuItem.Visible = false;
+            }
             lblCountdown.Text = breakSeconds.ToString();
-            var msg = string.Join($"{Environment.NewLine}", startupMessages.ToArray());
-            ReportIt(msg);
+            ReportIt(startupMessages.ToArray());
             if (startupMessages.Any() && !quietMode)
             {
-                MessageBox.Show(msg, "WinKaf Startup Overrides", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(string.Join($"{Environment.NewLine}", startupMessages.ToArray()), 
+                    "WinKaf Startup Overrides", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             chkUseMouseMode.Checked = mouseMode;
             bw.RunWorkerAsync();
@@ -123,6 +126,12 @@ _ =                    int.TryParse(_argList["/b"], out breakSeconds);
                 using StreamWriter file = new(logFileName, append: true);
                 file.WriteLine($"{timestamp} - {message}");
             }
+        }
+
+        private void ReportIt(string[] messages )
+        {
+            foreach(var msg in messages)
+                ReportIt(msg);
         }
 
         private List<string> CleanupLogs()
