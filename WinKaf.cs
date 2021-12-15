@@ -67,7 +67,7 @@ namespace WinKaf
             {
                 if (_argList.ContainsKey("/b"))
                 {
-_ =                    int.TryParse(_argList["/b"], out breakSeconds);
+                    _ = int.TryParse(_argList["/b"], out breakSeconds);
                     startupMessages.Add($"Default timeout (300 seconds) overridden to {breakSeconds}");
                 }
                 if (_argList.ContainsKey("/d"))
@@ -102,7 +102,7 @@ _ =                    int.TryParse(_argList["/b"], out breakSeconds);
             if (loggingEnabled)
             {
                 btnViewLog.Visible = true;
-                viewLogToolStripMenuItem.Visible = false;
+                viewLogToolStripMenuItem.Visible = true;
             }
             lblCountdown.Text = breakSeconds.ToString();
             ReportIt(startupMessages.ToArray());
