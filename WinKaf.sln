@@ -5,16 +5,30 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinKaf", "WinKaf.csproj", "{BA297B3F-0511-429B-9CC4-A53FD3AA594B}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "WinKaf.Setup", "..\WinKaf.Setup\WinKaf.Setup\WinKaf.Setup.vdproj", "{2A113B0A-9C4C-4448-B521-5093D63DA37B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BA297B3F-0511-429B-9CC4-A53FD3AA594B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BA297B3F-0511-429B-9CC4-A53FD3AA594B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA297B3F-0511-429B-9CC4-A53FD3AA594B}.Debug|x64.ActiveCfg = Debug|x64
+		{BA297B3F-0511-429B-9CC4-A53FD3AA594B}.Debug|x64.Build.0 = Debug|x64
 		{BA297B3F-0511-429B-9CC4-A53FD3AA594B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA297B3F-0511-429B-9CC4-A53FD3AA594B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA297B3F-0511-429B-9CC4-A53FD3AA594B}.Release|x64.ActiveCfg = Release|x64
+		{BA297B3F-0511-429B-9CC4-A53FD3AA594B}.Release|x64.Build.0 = Release|x64
+		{2A113B0A-9C4C-4448-B521-5093D63DA37B}.Debug|Any CPU.ActiveCfg = Debug
+		{2A113B0A-9C4C-4448-B521-5093D63DA37B}.Debug|x64.ActiveCfg = Debug
+		{2A113B0A-9C4C-4448-B521-5093D63DA37B}.Debug|x64.Build.0 = Debug
+		{2A113B0A-9C4C-4448-B521-5093D63DA37B}.Release|Any CPU.ActiveCfg = Release
+		{2A113B0A-9C4C-4448-B521-5093D63DA37B}.Release|x64.ActiveCfg = Release
+		{2A113B0A-9C4C-4448-B521-5093D63DA37B}.Release|x64.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

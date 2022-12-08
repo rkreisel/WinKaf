@@ -6,9 +6,16 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Images\Papirus-Team-Papirus-Apps-Caffeine.ico</ApplicationIcon>
     <NeutralLanguage>en</NeutralLanguage>
+    <Platforms>AnyCPU;x64</Platforms>
+    <PackageIcon>caffeine.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;IDE1006</NoWarn>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NoWarn>1701;1702;IDE1006</NoWarn>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -18,17 +25,35 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NoWarn>1701;1702;IDE1006</NoWarn>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Images\Papirus-Team-Papirus-Apps-Caffeine.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Images\Papirus-Team-Papirus-Apps-Caffeine.ico" />
+    <EmbeddedResource Include="Images\Papirus-Team-Papirus-Apps-Caffeine.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Management" Version="6.0.0" />
     <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Images\caffeine.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="Images\Papirus-Team-Papirus-Apps-Caffeine.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
